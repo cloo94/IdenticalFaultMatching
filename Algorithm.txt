@@ -1,0 +1,25 @@
+Fault Finder:
+Perform the following for each pair of faults
+
+
+    1. Recursively check for what outputs depend on each faulty gate
+        -If there are differences in the lists, then the faults cannot be equal(break, check next pair)
+        -If the lists are identical, then faults can exist (keep checking)
+
+
+    2. Check what the output truth tables are for each fault
+
+        -If the truth tables are unequal, then the faults cannot be identical
+
+        -If the truth tables are equal, then the faults may be identical
+
+
+    3. Check every gate that is dependent on both fault-marked gates to see if an identical fault is produced
+
+        -Recursively search through dependencies in each gate, and add them to a list
+
+        -Find which dependent gates are shared in these lists, produce one list with the common gates
+
+        -Produce truth tables for all the common gates assuming both faults
+
+        -If truth tables for having one fault is the same as truth tables containing both faults, then there are identical faults

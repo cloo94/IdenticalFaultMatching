@@ -1,0 +1,19 @@
+
+# 8 inputs  -- clock(1), reset(1), input_data(6)
+# 7 outputs -- output_signal(7)
+# 21 D-type flip-flops
+# 204 gates ( 14 BUFFs + 14 NOTs + 23 ANDs + 41 NANDs + 37 ORs + 11 NORs + 21 XORs + 43 NXORs )
+
+INPUT(100)
+INPUT(101)
+INPUT(228)
+INPUT(229)
+INPUT(105)
+
+OUTPUT(301)
+
+106 = BUFF(105)
+502 = XOR(100,101)
+503 = XOR(228,229)
+504 = XOR(502,503)
+301 = AND(504,106)

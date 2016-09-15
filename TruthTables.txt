@@ -1,0 +1,52 @@
+BUFF
+A   Out
+0   0
+1   1
+
+NOT
+A   Out
+0   1
+1   0
+
+AND
+A   B   Out
+0   0   0
+0   1   0
+1   0   0
+1   1   1
+
+OR
+A   B   OUT
+0   0   0
+0   1   1
+1   0   1
+1   1   1
+
+XOR
+A   B   OUT
+0   0   0
+0   1   1
+1   0   1
+1   1   0
+
+NAND
+A   B   OUT
+0   0   1
+0   1   1
+1   0   1
+1   1   0
+
+NOR
+A   B   OUT
+0   0   1
+0   1   0
+1   0   0
+1   1   0
+
+NXOR
+A   B   OUT
+0   0   1
+0   1   0
+1   0   0
+1   1   1
+

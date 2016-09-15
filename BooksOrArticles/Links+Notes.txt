@@ -1,0 +1,13 @@
+Digital Logic testing and Simulation
+    https://books.google.com.tw/books?id=eb74u1AE4fEC&pg=PA335&lpg=PA335&dq=identical+fault+matching+in+logical+circuits&source=bl&ots=Z2F0K7cXo-&sig=aJCITnG1LqJEZMO-vsj0xiceDc4&hl=zh-TW&sa=X&ved=0ahUKEwjxvK_Oj5XNAhXEdqYKHc9tAPoQ6AEINDAD#v=onepage&q&f=false
+
+Diagnostic Test Pattern Generation and Fault Simulation for Stuck-at and transition Faults
+    http://www.eng.auburn.edu/~agrawvd/THESIS/ZHANG/dissertation_yu_2012.pdf
+
+Functional Fault Equivalence and Diagnostic Test Generation in Combinational Logic Circuits Using Conventional ATPG
+    http://www.eecg.toronto.edu/~veneris/jetta4.pdf
+
+Design Diversity for Concurrent Error Detection in Sequential Logic Circuits
+    http://www-crc.stanford.edu/crc_papers/mitravts01a.pdf
+
+

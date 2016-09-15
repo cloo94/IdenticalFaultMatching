@@ -1,0 +1,27 @@
+$date
+	Created on some day! Does it matter which?
+$end
+$version
+	Created by libLCS
+	See http://liblcs.sourceforge.net/ for more info.
+$end
+$timescale
+	1us
+$end
+$scope module all $end
+$var reg 2 Input Input[1:0] $end
+$var reg 1 Output Output $end
+$enddefinitions $end
+#0
+bxx Input
+xOutput
+#0
+b00 Input
+0Output
+#200
+b01 Input
+#300
+b10 Input
+#400
+b11 Input
+1Output

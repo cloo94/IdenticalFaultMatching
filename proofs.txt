@@ -1,0 +1,116 @@
+For all proofs/hypotheses below, assume that there are two gates, gate A and gate B, and that there are two faults, fault 1 and fault 2.
+Fault 1 is applied to gate A, and fault 2 is applied to gate B.
+
+PROOFS
+
+1. If gates A and B are the same gate, and the two faults in question are SA0 and SA1, then faults 1 and 2 CANNOT be equivalent.
+Example from fault_description.txt:
+
+1	30000	SA0
+2	30000	SA1
+
+Proof:
+Given all possible types of gates, with SA0 applied to input A:
+
+BUFF
+A   Out
+0   0
+
+NOT
+A   Out
+0   1
+
+AND
+A   B   Out
+0   0   0
+0   1   0
+
+OR
+A   B   OUT
+0   0   0
+0   1   1
+
+XOR
+A   B   OUT
+0   0   0
+0   1   1
+
+NAND
+A   B   OUT
+0   0   1
+0   1   1
+
+NOR
+A   B   OUT
+0   0   1
+0   1   0
+
+NXOR
+A   B   OUT
+0   0   1
+0   1   0
+
+Given all possible types of gates, with SA1 applied to input A:
+
+BUFF
+A   Out
+1   1
+
+NOT
+A   Out
+1   0
+
+AND
+A   B   Out
+1   0   0
+1   1   1
+
+OR
+A   B   OUT
+1   0   1
+1   1   1
+
+XOR
+A   B   OUT
+1   0   1
+1   1   0
+
+NAND
+A   B   OUT
+1   0   1
+1   1   0
+
+NOR
+A   B   OUT
+1   0   0
+1   1   0
+
+NXOR
+A   B   OUT
+1   0   0
+1   1   1
+
+The set of outputs are not identical for any type of gate. Therefore, faults 1 and 2 can never be equivalent.
+
+
+WORKING HYPOTHESES
+
+1. If gates A and B do not share any children gates, then faults 1 and 2 CANNOT be equivalent.
+
+2. If gates A and B do not have the exact same set of children gates, then faults 1 and 2 CANNOT be equivalent.
+
+3. If one gate is the child of another gate, in order to be considered for equivalency, the parent gate must NOT have any other children gate.
+
+4. If gates A and B are the same, then faults 1 and 2 CANNOT be equivalent. (maybe?)
+    -The faults can be equivalent in some cases
+      AND gate with the following faults:
+        1. NOT (invert values)
+        2. Replace with NAND (add a not in front of values)
+
+
+
+
+Note: Right now it is setup such that:
+Given all of the faults, for every set of two faults, run a bunch of checks (the proofs in this file) to see whether or not the two faults can possibly be equivalent. If the answer is yes, continue to another algorithm that simulates the two faulty circuits, and compare the outputs beginning at the two faulty gates's children and continue onwards to grandchildren, great grandchildren, etc. If the answer is no, toss the set of two faults, and continue checking the next set of faults. Basically we are initially running a bunch of checks that definitely prove that two faults are not identical. We would need to run every set of faults (both identical and unidentical) through all checks.
+
+It may be faster to run a set of checks that, if any of those checks turn out positive, then we know for certain that two faults are identical. This way the identical faults do not need to be run through an entire set of checks, as a positive check would break out of a loop. We could then simulate the faulty circuits to be able to group together which sets of faults are identical (i.e. if more than two faults are identical). Not sure if this is actually plausible though, and this wouldn't be implemented until after actually running our program and observing the results to see if there are checks that could be created.

@@ -1,0 +1,56 @@
+I've included a listing of the files and main functions that are used (in order) whenever we run ABC from start to finish.
+
+1. abc/src/base/main/main.c - calls the function Abc_RealMain(int argc, char *argv[]) in 2
+
+2. abc/src/base/main/mainReal.c - gets user input and executes the command given using fStatus = Cmd_CommandExecute( pAbc, sCommand ). I replaced this to execute the read/cec commands we need instead of waiting on any user input. This leads to another function, which leads to another, and basically it makes that cec call and leads to 3
+
+3. abc/src/base/abci/abc.c - int Abc_CommandCec( Abc_Frame_t * pAbc, int argc, char ** argv ). This function performs the actual cec using 1 of 4 functions, in the lines
+
+   // perform equivalence checking
+        if ( fPartition )
+	        Abc_NtkCecFraigPartAuto( pNtk1, pNtk2, nSeconds, fVerbose );
+	else if ( nPartSize )
+	   	Abc_NtkCecFraigPart( pNtk1, pNtk2, nSeconds, nPartSize, fVerbose );
+	else if ( fSat )
+	        Abc_NtkCecSat( pNtk1, pNtk2, nConfLimit, nInsLimit );
+	else
+		Abc_NtkCecFraig( pNtk1, pNtk2, nSeconds, fVerbose );
+
+As you can see all the cec equivalence checking functions take in two networks, pNtk1 and pNtk2. We need to be able to generate these structures from just the gate design file and fault description file alone without having to create thousands of individual fault design files. This is the file most of my edits have been made in, and where I am trying to incorporate the fault design parser. Side note, it is very messy so it will probably not make a whole lot of sense but most of it works, basically like the original faultparser.cpp we were using except instead of writing every fault design to a file it will write to an internal data structure. In this file, pNtk1 and pNtk2 are generated from the line
+
+    if ( !Abc_NtkPrepareTwoNtks( stdout, pNtk, pArgvNew, nArgcNew, &pNtk1, &pNtk2, &fDelete1, &fDelete2 ) )
+            return 1;
+
+This function is located in another file.
+
+4. abc/src/base/abc/abcUtil.c - int Abc_NtkPrepareTwoNtks( FILE * pErr, Abc_Ntk_t * pNtk, char ** argv, int argc, Abc_Ntk_t ** ppNtk1, Abc_Ntk_t ** ppNtk2, int * pfDelete1, int * pfDelete2 )
+This file works depending on how you use the cec call, for example the line
+
+else if ( argc == util_optind + 1 )
+
+is used if, for example, you call read_bench gatedesignfile.isc and then cec faultdesign.bench, basically it creates Ntk1 by duplicating the already read in network and then gets Ntk2 from the file specified. The line
+
+else if ( argc == util_optind + 2 )
+
+is used if you skip the read and call cec with two arguments, such as cec faultdesign1.bench faultdesign2.bench, which creates Ntk1 and Ntk2 from the two specified files. For now I modified the first if statement that expects a read first and then a cec call with a single file argument. These if statements call pNtk2 = Io_Read( argv[util_optind], Io_ReadFileType(argv[util_optind]), fCheck, 0 ), which is in 5.
+
+5. abc/src/base/io/ioUtil.c - Abc_Ntk_t * Io_Read( char * pFileName, Io_FileType_t FileType, int fCheck, int fBarBufs )
+This calls pNtk = Io_ReadNetlist( pFileName, FileType, fCheck ), which is in the same file.
+
+6. Same file as above - Abc_Ntk_t * Io_ReadNetlist( char * pFileName, Io_FileType_t FileType, int fCheck )
+This file first tries to open the file to see if it exists - I got rid of this since we are trying not to eliminate using files. It calls, in our case, Io_ReadBench (since we are using the bench format files).
+
+    else if ( FileType == IO_FILE_BENCH )
+            pNtk = Io_ReadBench( pFileName, fCheck );
+
+This function is in 7.
+
+7. abc/src/base/io/ioReadBench.c - Abc_Ntk_t * Io_ReadBench( char * pFileName, int fCheck )
+This calls pNtk = Io_ReadBenchNetwork( p ), which is in the same file.
+
+8. Same file as above - Abc_Ntk_t * Io_ReadBenchNetwork( Extra_FileReader_t * p )
+This is where the actual file is read and a Ntk data structure is generated - here we need to make sure that instead of a file being read in, it is a string (or other data structure). This line specifically loops through all the lines in the file
+
+for ( iLine = 0; (vTokens = (Vec_Ptr_t *)Extra_FileReaderGetTokens(p)); iLine++ )
+
+This functions calls other functions such as Io_ReadCreatePi( pNtk, (char *)vTokens->pArray[1] ) and Io_ReadCreatePo( pNtk, (char *)vTokens->pArray[1] ) to create primary inputs and primary outputs as well as the other nodes. I don't think we need to touch any of this.

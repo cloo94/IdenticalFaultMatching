@@ -1,0 +1,42 @@
+#Compiler definitions
+CC=gcc
+CPP = g++	#This is the default compiler, we need to use -std=11
+
+#Falgs for compilers
+CCFLAGS= -Wall
+CPPFLAGS = -std=c++11
+
+#TargetExecutable
+TARGET=compare
+
+#All of our componenet descriptions
+PARSER=parser.c #parser
+TESTER=compare.cpp #Tester setup
+COMPARATOR = readComp.c #actually compares
+
+#NOTE The distributions of C and C++ could change, which might invalidate parts of this make
+
+all: $(TARGET)
+
+$(TARGET) : faultparser.o readComp.o compare.o
+	#$(CC) -o $(TARGET) parser.o compare.o readComp.o
+	#You NEED to include all flags used previously
+	g++ -o test compare.o readComp.o faultClassesparser.o abc/libabc.a -lm -ldl -rdynamic -lreadline -ltermcap -lpthread -std=c++11
+
+# C file
+faultparser.o : faultparser.cpp
+	#$(CC) -c $(PARSER)
+	g++ -c -o faultparser.o faultparser.cpp
+
+#C++ File
+compare.o : $(TESTER)
+	#$(CPP) -c $(TESTER) $(CPPFLAGS)
+	g++ -c -o compare.o compare.cpp -std=c++11
+
+#C File
+readComp.o :$(COMPARATOR)
+	#$(CC) -c $(COMPARATOR) abc/libabc.a -lm -ldl -rdynamic -lreadline -ltermcap -lpthread
+	gcc -c -o readComp.o readComp.c abc/libabc.a -lm -ldl -rdynamic -lreadline -ltermcap -lpthread
+
+clean :
+		rm $(TARGET) faultparser.o readComp.o compare.o
